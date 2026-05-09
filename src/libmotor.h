@@ -18,14 +18,14 @@
  * SERVO_DEAD_BAND_US entre 0 y 50 para centrar los servos.
  */
 
-#define SERVO_LEFT_GPIO     14
+#define SERVO_LEFT_GPIO     20
 #define SERVO_RIGHT_GPIO    21
 
 // Canales LEDC 4 y 5 (evita conflicto con canal 0 usado por XCLK de la cámara)
 #define SERVO_LEFT_CHAN      4
 #define SERVO_RIGHT_CHAN     5
 #define SERVO_FREQ_HZ        50     // 50 Hz → período 20 ms
-#define SERVO_RESOLUTION     16     // 16 bits → 65536 niveles
+#define SERVO_RESOLUTION     14     // 14 bits → 16384 niveles (máx ESP32-S3 Arduino)
 
 #define SERVO_STOP_US        1500   // Centro = parado
 #define SERVO_MAX_US         2000   // Límite superior

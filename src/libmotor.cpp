@@ -3,12 +3,12 @@
 #include <string.h>
 
 /*
- * Convierte microsegundos → duty cycle de 16 bits para 50 Hz.
- * Período = 20 000 µs → 65 536 counts
- * duty = us × 65 536 / 20 000
+ * Convierte microsegundos → duty cycle de 14 bits para 50 Hz.
+ * Período = 20 000 µs → 16 384 counts
+ * duty = us × 16 384 / 20 000
  */
 static inline uint32_t usToDuty(uint16_t us) {
-    return (uint32_t)((uint64_t)us * 65536ULL / 20000ULL);
+    return (uint32_t)((uint64_t)us * 16384ULL / 20000ULL);
 }
 
 static void servoWrite(uint8_t channel, uint16_t us) {

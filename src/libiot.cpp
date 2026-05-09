@@ -6,11 +6,8 @@
 #include <WiFi.h>
 
 // ══════════════════════════════════════════════════════════════════
-//  CREDENCIALES
-//  Inyectadas por scripts/add_env_defines.py desde .env
-//  o desde GitHub Secrets en el pipeline de CI/CD.
+//  CREDENCIALES — inyectadas por scripts/add_env_defines.py
 // ══════════════════════════════════════════════════════════════════
-
 #ifndef MQTT_SERVER
 #  define MQTT_SERVER ""
 #endif
@@ -34,7 +31,6 @@
 #endif
 
 // Certificado raíz Let's Encrypt ISRG Root X1
-// El mismo que usa EMQX con TLS de Let's Encrypt.
 #ifndef ROOT_CA
 #  define ROOT_CA \
 "-----BEGIN CERTIFICATE-----\n" \
@@ -70,7 +66,7 @@
 "-----END CERTIFICATE-----"
 #endif
 
-// ── Definición de variables globales ──────────────────────────────
+// ── Variables globales ─────────────────────────────────────────────
 const char* ssid           = WIFI_SSID;
 const char* password       = WIFI_PASSWORD;
 const char* mqtt_server    = MQTT_SERVER;
@@ -80,9 +76,10 @@ const char* mqtt_user      = MQTT_USER;
 const char* mqtt_password  = MQTT_PASSWORD;
 const char* root_ca        = ROOT_CA;
 
-WiFiClientSecure espClient;
-PubSubClient     client(espClient);
-time_t           now;
+WiFiClientSecure     espClient;
+PubSubClient         client(espClient);
+time_t               now;
+volatile DriveMode   driveMode = MODE_AUTO;
 
 static String        clientId;
 static unsigned long lastHealthcheck = 0;
@@ -94,9 +91,31 @@ static void onMQTTMessage(char* topic, byte* payload, unsigned int length) {
     data.reserve(length);
     for (unsigned int i = 0; i < length; i++) data += (char)payload[i];
 
-    Serial.println("[MQTT] Recibido — " + topicStr);
+    Serial.println("[MQTT] " + topicStr + " → " + data);
 
+    // ── Cambio de modo (auto / manual) ────────────────────────────
+    if (topicStr == TOPIC_CMD_MODE) {
+        StaticJsonDocument<64> doc;
+        if (!deserializeJson(doc, data)) {
+            const char* mode = doc["mode"] | "auto";
+            if (strcmp(mode, "manual") == 0) {
+                driveMode = MODE_MANUAL;
+                Serial.println("[Modo] MANUAL");
+            } else {
+                driveMode = MODE_AUTO;
+                stopMotors();
+                Serial.println("[Modo] AUTÓNOMO");
+            }
+        }
+        return;
+    }
+
+    // ── Comando de movimiento (solo en modo manual) ───────────────
     if (topicStr == TOPIC_CMD_MOV) {
+        if (driveMode != MODE_MANUAL) {
+            Serial.println("[MQTT] Ignorado — activar modo manual primero");
+            return;
+        }
         StaticJsonDocument<128> doc;
         if (deserializeJson(doc, data)) { Serial.println("[MQTT] JSON inválido"); return; }
         const char* dir = doc["dir"]   | "stop";
@@ -105,13 +124,12 @@ static void onMQTTMessage(char* topic, byte* payload, unsigned int length) {
         return;
     }
 
+    // ── OTA ───────────────────────────────────────────────────────
     if (topicStr == TOPIC_OTA_CMD) {
         Serial.println("[MQTT] Disparando OTA...");
         checkOTAUpdate(data.c_str());
         return;
     }
-
-    Serial.println("[MQTT] Topic no reconocido, ignorando.");
 }
 
 // ── Reconexión MQTT ───────────────────────────────────────────────
@@ -122,9 +140,9 @@ static void reconnect() {
                      String(mqtt_port) + " ... ");
         if (client.connect(clientId.c_str(), mqtt_user, mqtt_password)) {
             Serial.println("OK");
-            client.subscribe(TOPIC_CMD_MOV, 1);
-            client.subscribe(TOPIC_OTA_CMD, 1);
-            Serial.println("[MQTT] Suscrito a " TOPIC_CMD_MOV " y " TOPIC_OTA_CMD);
+            client.subscribe(TOPIC_CMD_MOV,  1);
+            client.subscribe(TOPIC_CMD_MODE, 1);
+            client.subscribe(TOPIC_OTA_CMD,  1);
             publishStatus();
         } else {
             int st = client.state();
@@ -148,17 +166,9 @@ void setupIoT() {
     clientId = getMacAddress();
     espClient.setCACert(root_ca);
     espClient.setTimeout(45);
-
-    IPAddress brokerIp;
-    if (mqtt_server && strlen(mqtt_server) > 0 &&
-        !WiFi.hostByName(mqtt_server, brokerIp)) {
-        Serial.println("[MQTT] DNS no resuelve " + String(mqtt_server));
-    }
-
     client.setServer(mqtt_server, mqtt_port);
-    client.setBufferSize(1024);
+    client.setBufferSize(512);
     client.setCallback(onMQTTMessage);
-
     Serial.println("[MQTT] Broker: " + String(mqtt_server) +
                    "  Puerto: " + String(mqtt_port) +
                    "  ClientID: " + clientId);
@@ -168,10 +178,9 @@ void checkMQTT() {
     if (WiFi.status() != WL_CONNECTED) return;
     if (!client.connected()) reconnect();
     client.loop();
-
     if (millis() - lastHealthcheck > 30000) {
         lastHealthcheck = millis();
-        Serial.println("[MQTT] Estado: " + String(client.connected() ? "UP" : "DOWN"));
+        Serial.println("[MQTT] " + String(client.connected() ? "UP" : "DOWN"));
     }
 }
 
@@ -193,10 +202,20 @@ void publishStatus() {
     doc["online"] = true;
     doc["ip"]     = WiFi.localIP().toString();
     doc["fw"]     = getFirmwareVersion();
+    doc["mode"]   = (driveMode == MODE_AUTO) ? "auto" : "manual";
     char buf[128];
     serializeJson(doc, buf);
     client.publish(TOPIC_STATUS_CONN, buf, true);
-    Serial.println("[MQTT] Status: " + String(buf));
+}
+
+void publishDistance(float cm, const char* estado) {
+    if (!client.connected()) return;
+    StaticJsonDocument<64> doc;
+    doc["cm"]     = serialized(String(cm, 1));
+    doc["estado"] = estado;
+    char buf[64];
+    serializeJson(doc, buf);
+    client.publish(TOPIC_STATUS_DIST, buf);
 }
 
 void publishBattery(float voltage, int levelPct) {

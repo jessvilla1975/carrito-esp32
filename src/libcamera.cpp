@@ -70,8 +70,8 @@ bool initCamera() {
 
     sensor_t* s = esp_camera_sensor_get();
     if (s) {
-        s->set_vflip(s, 0);
-        s->set_hmirror(s, 0);
+        s->set_vflip(s, 1);    // voltear verticalmente
+        s->set_hmirror(s, 1);  // espejo horizontal
         s->set_brightness(s, 1);
         s->set_saturation(s, 0);
     }

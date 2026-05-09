@@ -13,3 +13,7 @@ compile_commands.json
 # Sistema operativo
 .DS_Store
 Thumbs.db
+
+
+*.pem
+credentials.txt

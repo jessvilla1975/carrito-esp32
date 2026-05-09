@@ -24,16 +24,14 @@
 
     /* ── HEADER ── */
     header {
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky; top: 0; z-index: 100;
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 14px 24px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 100;
     }
-    header h1 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-    header h1 span { font-size: 1.5rem; }
+    .header-brand { display: flex; align-items: center; gap: 10px; }
+    .header-brand svg { color: var(--accent); }
+    header h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: .3px; }
+    header h1 span { color: var(--accent); }
     #conn-badge {
       display: flex; align-items: center; gap: 8px;
       padding: 6px 14px; border-radius: 20px;
@@ -42,128 +40,124 @@
     }
     #conn-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--danger); transition: background .3s; }
     #conn-badge.connected #conn-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
-    #conn-badge.connected { border-color: var(--green); }
+    #conn-badge.connected { border-color: #2ed57340; }
 
     /* ── LAYOUT ── */
-    main { max-width: 900px; margin: 0 auto; padding: 20px 16px; display: grid; gap: 16px;
-      grid-template-columns: 1fr 1fr;
-    }
+    main { max-width: 900px; margin: 0 auto; padding: 20px 16px; display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
     @media (max-width: 600px) { main { grid-template-columns: 1fr; } }
 
     /* ── CARD ── */
-    .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 20px;
-    }
-    .card h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 16px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+    .card-title { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.4px; color: var(--muted); margin-bottom: 16px; }
+    .card-title svg { width: 14px; height: 14px; }
 
     /* ── DISTANCIA ── */
     #dist-value { font-size: 3.5rem; font-weight: 800; line-height: 1; color: var(--accent2); transition: color .3s; }
     #dist-value.danger { color: var(--danger); }
     #dist-value.warn   { color: var(--warn); }
-    #dist-label { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
-    #dist-bar-wrap { margin-top: 14px; background: var(--border); border-radius: 6px; height: 8px; overflow: hidden; }
+    #dist-label { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+    #dist-bar-wrap { margin-top: 14px; background: var(--border); border-radius: 6px; height: 7px; overflow: hidden; }
     #dist-bar { height: 100%; width: 0%; background: var(--accent2); border-radius: 6px; transition: width .4s, background .3s; }
 
     /* ── MODO ── */
     .mode-toggle { display: flex; gap: 10px; }
     .mode-btn {
-      flex: 1; padding: 12px; border-radius: 10px; border: 2px solid var(--border);
-      background: transparent; color: var(--muted); font-size: 0.9rem; font-weight: 600;
-      cursor: pointer; transition: all .2s;
+      flex: 1; padding: 11px 8px; border-radius: 10px; border: 2px solid var(--border);
+      background: transparent; color: var(--muted); font-size: 0.88rem; font-weight: 600;
+      cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 7px;
     }
+    .mode-btn svg { width: 15px; height: 15px; }
     .mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
     .mode-btn:hover:not(.active) { border-color: var(--accent); color: var(--text); }
+    #mode-hint { font-size: 0.78rem; color: var(--muted); margin-top: 12px; line-height: 1.5; }
 
     /* ── DPAD ── */
-    .dpad { display: grid; grid-template-columns: repeat(3, 56px); grid-template-rows: repeat(3, 56px); gap: 6px; margin: 0 auto; width: fit-content; }
+    .dpad-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .dpad { display: grid; grid-template-columns: repeat(3, 54px); grid-template-rows: repeat(3, 54px); gap: 6px; }
     .btn-dir {
       background: var(--border); border: none; border-radius: 10px; color: var(--text);
-      font-size: 1.3rem; cursor: pointer; transition: all .15s; user-select: none;
+      cursor: pointer; transition: all .15s; user-select: none;
       display: flex; align-items: center; justify-content: center;
     }
-    .btn-dir:active, .btn-dir.pressed { background: var(--accent); transform: scale(0.93); }
+    .btn-dir svg { width: 18px; height: 18px; }
+    .btn-dir:active, .btn-dir.pressed { background: var(--accent); }
     .btn-stop {
-      grid-column: 2; grid-row: 2;
-      background: #2a1a1a; border: 2px solid #ff475733; color: var(--danger);
-      border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer;
-      transition: all .15s; display: flex; align-items: center; justify-content: center;
+      background: #1e1218; border: 2px solid #ff475733; color: var(--danger);
+      border-radius: 10px; cursor: pointer; transition: all .15s;
+      display: flex; align-items: center; justify-content: center;
     }
-    .btn-stop:active { background: var(--danger); color: #fff; }
+    .btn-stop svg { width: 16px; height: 16px; }
+    .btn-stop:active { background: var(--danger); color: #fff; border-color: var(--danger); }
     .dpad-empty { visibility: hidden; }
+    .kbd-hint { font-size: 0.73rem; color: var(--muted); }
+    kbd { background: #2a2d3e; padding: 2px 7px; border-radius: 5px; font-family: inherit; border: 1px solid var(--border); }
 
     /* ── VELOCIDAD ── */
-    #speed-val { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
-    input[type=range] {
-      width: 100%; margin-top: 12px; accent-color: var(--accent);
-      height: 6px; cursor: pointer;
-    }
+    #speed-val { font-size: 2rem; font-weight: 800; color: var(--accent); }
+    #speed-unit { font-size: 0.8rem; color: var(--muted); margin-left: 3px; }
+    input[type=range] { width: 100%; margin-top: 14px; accent-color: var(--accent); height: 6px; cursor: pointer; }
 
-    /* ── STATUS LOG ── */
+    /* ── STATS ── */
+    .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-key { font-size: 0.81rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    .stat-key svg { width: 13px; height: 13px; }
+    .stat-val { font-size: 0.86rem; font-weight: 600; }
+
+    /* ── LOG ── */
+    #log-card { grid-column: 1 / -1; }
     #log {
-      grid-column: 1 / -1;
-      height: 130px; overflow-y: auto;
+      height: 120px; overflow-y: auto;
       background: #0a0c14; border: 1px solid var(--border);
       border-radius: 10px; padding: 10px 14px;
-      font-family: 'Courier New', monospace; font-size: 0.78rem;
+      font-family: 'Courier New', monospace; font-size: 0.77rem;
     }
-    #log p { color: var(--muted); margin-bottom: 3px; }
-    #log p .ts { color: #444; margin-right: 6px; }
+    #log p { color: var(--muted); margin-bottom: 2px; }
+    #log p .ts { color: #3a3d55; margin-right: 8px; }
     #log p.info .ts { color: var(--accent); }
     #log p.ok   .ts { color: var(--green); }
     #log p.err  .ts { color: var(--danger); }
-    #log p.data  { color: var(--accent2); }
+    #log p.data { color: var(--accent2); }
 
-    /* ── MODAL CONFIGURACIÓN ── */
-    #modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.7);
-      display: flex; align-items: center; justify-content: center; z-index: 200;
-    }
-    #modal {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 28px; width: min(420px, 95vw);
-    }
-    #modal h2 { font-size: 1.1rem; margin-bottom: 6px; }
-    #modal p { color: var(--muted); font-size: 0.85rem; margin-bottom: 20px; }
+    /* ── MODAL ── */
+    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); display: flex; align-items: center; justify-content: center; z-index: 200; }
+    #modal { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; width: min(420px, 94vw); }
+    .modal-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .modal-header svg { color: var(--accent); width: 22px; height: 22px; }
+    #modal h2 { font-size: 1.1rem; }
+    #modal > p { color: var(--muted); font-size: 0.84rem; margin-bottom: 22px; margin-top: 4px; }
     .field { margin-bottom: 14px; }
-    .field label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 5px; }
-    .field input {
-      width: 100%; background: #0a0c14; border: 1px solid var(--border);
-      border-radius: 8px; padding: 10px 12px; color: var(--text); font-size: 0.9rem;
-    }
+    .field label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 5px; letter-spacing: .3px; }
+    .field input { width: 100%; background: #0a0c14; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text); font-size: 0.9rem; }
     .field input:focus { outline: none; border-color: var(--accent); }
-    #btn-connect {
-      width: 100%; padding: 12px; background: var(--accent); border: none;
-      border-radius: 10px; color: #fff; font-size: 1rem; font-weight: 700;
-      cursor: pointer; margin-top: 6px; transition: opacity .2s;
-    }
+    #btn-connect { width: 100%; padding: 12px; background: var(--accent); border: none; border-radius: 10px; color: #fff; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 6px; transition: opacity .2s; letter-spacing: .3px; }
     #btn-connect:hover { opacity: .85; }
-
-    /* ── ESTADO CARRITO ── */
-    .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
-    .stat-row:last-child { border-bottom: none; }
-    .stat-key { font-size: 0.82rem; color: var(--muted); }
-    .stat-val { font-size: 0.88rem; font-weight: 600; }
   </style>
 </head>
 <body>
 
-<!-- MODAL DE CONFIGURACIÓN -->
+<!-- MODAL -->
 <div id="modal-overlay">
   <div id="modal">
-    <h2>🤖 CarrIoT — Conectar</h2>
+    <div class="modal-header">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+      <h2>CarrIoT — Conectar</h2>
+    </div>
     <p>Ingresa las credenciales del broker MQTT para controlar el carrito.</p>
     <div class="field"><label>Broker (WSS)</label><input id="cfg-host" value="carbot.ddnsfree.com"></div>
     <div class="field"><label>Puerto WSS</label><input id="cfg-port" value="8884" type="number"></div>
     <div class="field"><label>Usuario</label><input id="cfg-user" value="dashboard"></div>
-    <div class="field"><label>Contraseña</label><input id="cfg-pass" type="password" placeholder="tu contraseña MQTT"></div>
+    <div class="field"><label>Contraseña</label><input id="cfg-pass" type="password" placeholder="contraseña MQTT"></div>
     <button id="btn-connect">Conectar</button>
   </div>
 </div>
 
 <!-- HEADER -->
 <header>
-  <h1><span>🤖</span> CarrIoT Dashboard</h1>
+  <div class="header-brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2H8V6a4 4 0 0 1 4-4z"/><rect x="4" y="8" width="16" height="12" rx="2"/><circle cx="9" cy="14" r="1.5" fill="currentColor"/><circle cx="15" cy="14" r="1.5" fill="currentColor"/></svg>
+    <h1>Carr<span>IoT</span> Dashboard</h1>
+  </div>
   <div id="conn-badge">
     <div id="conn-dot"></div>
     <span id="conn-text">Desconectado</span>
@@ -175,63 +169,131 @@
 
   <!-- DISTANCIA -->
   <div class="card">
-    <h2>📡 Sensor Ultrasónico</h2>
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Sensor Ultrasónico
+    </div>
     <div id="dist-value">—</div>
-    <div id="dist-label">cm · esperando datos...</div>
+    <div id="dist-label">cm · esperando datos</div>
     <div id="dist-bar-wrap"><div id="dist-bar"></div></div>
   </div>
 
   <!-- ESTADO -->
   <div class="card">
-    <h2>📊 Estado del Carrito</h2>
-    <div class="stat-row"><span class="stat-key">IP</span><span class="stat-val" id="st-ip">—</span></div>
-    <div class="stat-row"><span class="stat-key">Firmware</span><span class="stat-val" id="st-fw">—</span></div>
-    <div class="stat-row"><span class="stat-key">Modo</span><span class="stat-val" id="st-mode">—</span></div>
-    <div class="stat-row"><span class="stat-key">Online</span><span class="stat-val" id="st-online">—</span></div>
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Estado del Carrito
+    </div>
+    <div class="stat-row">
+      <span class="stat-key">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        IP
+      </span>
+      <span class="stat-val" id="st-ip">—</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-key">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Firmware
+      </span>
+      <span class="stat-val" id="st-fw">—</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-key">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Modo
+      </span>
+      <span class="stat-val" id="st-mode">—</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-key">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Online
+      </span>
+      <span class="stat-val" id="st-online">—</span>
+    </div>
   </div>
 
   <!-- MODO -->
   <div class="card">
-    <h2>⚙️ Modo de Operación</h2>
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="btn-auto" onclick="setMode('auto')">🤖 Autónomo</button>
-      <button class="mode-btn" id="btn-manual" onclick="setMode('manual')">🕹️ Manual</button>
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      Modo de Operación
     </div>
-    <p style="font-size:0.78rem;color:var(--muted);margin-top:12px" id="mode-hint">
-      El carrito evade obstáculos automáticamente.
-    </p>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-auto" onclick="setMode('auto')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2H8V6a4 4 0 0 1 4-4z"/><rect x="4" y="8" width="16" height="12" rx="2"/><circle cx="9" cy="14" r="1" fill="currentColor"/><circle cx="15" cy="14" r="1" fill="currentColor"/></svg>
+        Autónomo
+      </button>
+      <button class="mode-btn" id="btn-manual" onclick="setMode('manual')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="8" width="20" height="14" rx="2"/><circle cx="8" cy="15" r="2"/><line x1="8" y1="2" x2="8" y2="8"/><line x1="16" y1="2" x2="16" y2="8"/><line x1="12" y1="3" x2="12" y2="8"/></svg>
+        Manual
+      </button>
+    </div>
+    <p id="mode-hint">El carrito evade obstáculos automáticamente.</p>
   </div>
 
   <!-- VELOCIDAD -->
   <div class="card">
-    <h2>⚡ Velocidad</h2>
-    <div id="speed-val">65</div>
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Velocidad
+    </div>
+    <div><span id="speed-val">65</span><span id="speed-unit">/ 100</span></div>
     <input type="range" id="speed-slider" min="20" max="100" value="65"
       oninput="document.getElementById('speed-val').textContent=this.value">
   </div>
 
   <!-- DPAD -->
   <div class="card" style="grid-column:1/-1">
-    <h2>🎮 Control Manual</h2>
-    <div class="dpad" style="margin-top:8px">
-      <div class="dpad-empty"></div>
-      <button class="btn-dir" id="btn-up"    onmousedown="move('forward')"  onmouseup="move('stop')" ontouchstart="move('forward')" ontouchend="move('stop')">▲</button>
-      <div class="dpad-empty"></div>
-      <button class="btn-dir" id="btn-left"  onmousedown="move('left')"    onmouseup="move('stop')" ontouchstart="move('left')"    ontouchend="move('stop')">◀</button>
-      <button class="btn-stop"               onmousedown="move('stop')"    ontouchstart="move('stop')">■</button>
-      <button class="btn-dir" id="btn-right" onmousedown="move('right')"   onmouseup="move('stop')" ontouchstart="move('right')"   ontouchend="move('stop')">▶</button>
-      <div class="dpad-empty"></div>
-      <button class="btn-dir" id="btn-down"  onmousedown="move('backward')" onmouseup="move('stop')" ontouchstart="move('backward')" ontouchend="move('stop')">▼</button>
-      <div class="dpad-empty"></div>
+    <div class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="8" width="20" height="14" rx="2"/><circle cx="8" cy="15" r="2"/><line x1="8" y1="2" x2="8" y2="8"/><line x1="16" y1="2" x2="16" y2="8"/><line x1="12" y1="3" x2="12" y2="8"/></svg>
+      Control Manual
     </div>
-    <p style="font-size:0.75rem;color:var(--muted);text-align:center;margin-top:12px">
-      También puedes usar las teclas <kbd style="background:#2a2d3e;padding:2px 6px;border-radius:4px">W A S D</kbd>
-    </p>
+    <div class="dpad-wrap">
+      <div class="dpad">
+        <div class="dpad-empty"></div>
+        <button class="btn-dir" id="btn-up"
+          onmousedown="move('forward')"  onmouseup="move('stop')"
+          ontouchstart="move('forward')" ontouchend="move('stop')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+        <div class="dpad-empty"></div>
+        <button class="btn-dir" id="btn-left"
+          onmousedown="move('left')"  onmouseup="move('stop')"
+          ontouchstart="move('left')" ontouchend="move('stop')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="btn-stop"
+          onmousedown="move('stop')" ontouchstart="move('stop')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+        </button>
+        <button class="btn-dir" id="btn-right"
+          onmousedown="move('right')"  onmouseup="move('stop')"
+          ontouchstart="move('right')" ontouchend="move('stop')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <div class="dpad-empty"></div>
+        <button class="btn-dir" id="btn-down"
+          onmousedown="move('backward')"  onmouseup="move('stop')"
+          ontouchstart="move('backward')" ontouchend="move('stop')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dpad-empty"></div>
+      </div>
+      <p class="kbd-hint">Teclado: <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> &nbsp;·&nbsp; <kbd>Space</kbd> para detener</p>
+    </div>
   </div>
 
   <!-- LOG -->
-  <div id="log" class="card" style="grid-column:1/-1">
-    <p class="info"><span class="ts">⬡</span> CarrIoT Dashboard listo. Ingresa tus credenciales para conectar.</p>
+  <div class="card log-card" style="grid-column:1/-1">
+    <div class="card-title" style="margin-bottom:10px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Consola MQTT
+    </div>
+    <div id="log">
+      <p class="info"><span class="ts">[--:--:--]</span>Sistema listo. Ingresa tus credenciales para conectar.</p>
+    </div>
   </div>
 
 </main>
@@ -240,21 +302,18 @@
   let mqttClient = null;
   let currentMode = 'auto';
 
-  // ── Conectar ──────────────────────────────────────────────────────
   document.getElementById('btn-connect').addEventListener('click', () => {
     const host = document.getElementById('cfg-host').value.trim();
     const port = parseInt(document.getElementById('cfg-port').value);
     const user = document.getElementById('cfg-user').value.trim();
     const pass = document.getElementById('cfg-pass').value;
-
     if (!pass) { alert('Ingresa la contraseña MQTT'); return; }
 
     const url = `wss://${host}:${port}/mqtt`;
     log(`Conectando a ${url}...`, 'info');
 
     mqttClient = mqtt.connect(url, {
-      username: user,
-      password: pass,
+      username: user, password: pass,
       clientId: 'dashboard-' + Math.random().toString(16).substr(2, 8),
       rejectUnauthorized: true,
       reconnectPeriod: 5000,
@@ -265,36 +324,27 @@
       document.getElementById('modal-overlay').style.display = 'none';
       document.getElementById('conn-badge').classList.add('connected');
       document.getElementById('conn-text').textContent = 'Conectado';
-      log('Conexión MQTT/TLS establecida', 'ok');
+      log('Conexion MQTT/TLS establecida', 'ok');
       mqttClient.subscribe('carrito/status/distancia');
       mqttClient.subscribe('carrito/status/conexion');
       mqttClient.subscribe('carrito/status/bateria');
       log('Suscrito a topics del carrito', 'ok');
     });
 
-    mqttClient.on('message', (topic, payload) => {
-      const data = payload.toString();
-      handleMessage(topic, data);
-    });
+    mqttClient.on('message', (topic, payload) => handleMessage(topic, payload.toString()));
 
-    mqttClient.on('error', (err) => {
-      log('Error MQTT: ' + err.message, 'err');
-      document.getElementById('conn-badge').classList.remove('connected');
-      document.getElementById('conn-text').textContent = 'Error';
-    });
-
-    mqttClient.on('close', () => {
-      document.getElementById('conn-badge').classList.remove('connected');
-      document.getElementById('conn-text').textContent = 'Desconectado';
-      log('Conexión cerrada', 'err');
-    });
-
-    mqttClient.on('reconnect', () => log('Reconectando...', 'info'));
+    mqttClient.on('error',     err => { log('Error: ' + err.message, 'err'); setBadge(false); });
+    mqttClient.on('close',     ()  => { log('Conexion cerrada', 'err');       setBadge(false); });
+    mqttClient.on('reconnect', ()  => log('Reconectando...', 'info'));
   });
 
-  // ── Mensajes entrantes ────────────────────────────────────────────
+  function setBadge(online) {
+    document.getElementById('conn-badge').classList.toggle('connected', online);
+    document.getElementById('conn-text').textContent = online ? 'Conectado' : 'Desconectado';
+  }
+
   function handleMessage(topic, data) {
-    log(`${topic} → ${data}`, 'data');
+    log(`${topic}  ${data}`, 'data');
     try {
       const obj = JSON.parse(data);
       if (topic === 'carrito/status/distancia') {
@@ -302,36 +352,33 @@
         const el = document.getElementById('dist-value');
         el.textContent = isNaN(cm) ? '—' : cm.toFixed(1);
         el.className = cm < 25 ? 'danger' : cm < 40 ? 'warn' : '';
-        document.getElementById('dist-label').textContent =
-          `cm · ${obj.estado || ''}`;
+        document.getElementById('dist-label').textContent = `cm  ·  ${obj.estado || ''}`;
         const pct = Math.min(100, Math.max(0, (cm / 150) * 100));
         const bar = document.getElementById('dist-bar');
         bar.style.width = pct + '%';
         bar.style.background = cm < 25 ? 'var(--danger)' : cm < 40 ? 'var(--warn)' : 'var(--accent2)';
       }
       if (topic === 'carrito/status/conexion') {
-        document.getElementById('st-ip').textContent    = obj.ip   || '—';
-        document.getElementById('st-fw').textContent    = obj.fw   || '—';
-        document.getElementById('st-mode').textContent  = obj.mode || '—';
-        document.getElementById('st-online').textContent = obj.online ? '✅ Sí' : '❌ No';
+        document.getElementById('st-ip').textContent     = obj.ip    || '—';
+        document.getElementById('st-fw').textContent     = obj.fw    || '—';
+        document.getElementById('st-mode').textContent   = obj.mode  || '—';
+        document.getElementById('st-online').textContent = obj.online ? 'En linea' : 'Fuera de linea';
       }
     } catch(e) {}
   }
 
-  // ── Modo ──────────────────────────────────────────────────────────
   function setMode(mode) {
     if (!mqttClient?.connected) { log('No conectado al broker', 'err'); return; }
     currentMode = mode;
     mqttClient.publish('carrito/cmd/modo', JSON.stringify({ mode }));
-    document.getElementById('btn-auto').classList.toggle('active', mode === 'auto');
+    document.getElementById('btn-auto').classList.toggle('active',   mode === 'auto');
     document.getElementById('btn-manual').classList.toggle('active', mode === 'manual');
     document.getElementById('mode-hint').textContent = mode === 'auto'
-      ? 'El carrito evade obstáculos automáticamente.'
+      ? 'El carrito evade obstaculos automaticamente.'
       : 'Control manual activo — usa el D-Pad o las teclas WASD.';
-    log(`Modo cambiado a: ${mode}`, 'info');
+    log(`Modo: ${mode}`, 'info');
   }
 
-  // ── Movimiento ────────────────────────────────────────────────────
   function move(dir) {
     if (!mqttClient?.connected) return;
     if (currentMode !== 'manual' && dir !== 'stop') {
@@ -339,26 +386,25 @@
     }
     const speed = parseInt(document.getElementById('speed-slider').value);
     mqttClient.publish('carrito/cmd/movimiento', JSON.stringify({ dir, speed }));
-    ['up','down','left','right'].forEach(d => {
-      document.getElementById('btn-' + d)?.classList.remove('pressed');
-    });
+    ['up','down','left','right'].forEach(d => document.getElementById('btn-'+d)?.classList.remove('pressed'));
     const map = { forward:'up', backward:'down', left:'left', right:'right' };
-    if (map[dir]) document.getElementById('btn-' + map[dir])?.classList.add('pressed');
+    if (map[dir]) document.getElementById('btn-'+map[dir])?.classList.add('pressed');
   }
 
-  // ── Teclado WASD ──────────────────────────────────────────────────
-  const keyMap = { w:'forward', a:'left', s:'backward', d:'right', ' ':'stop',
-                   ArrowUp:'forward', ArrowLeft:'left', ArrowDown:'backward', ArrowRight:'right' };
+  const keyMap = {
+    w:'forward', a:'left', s:'backward', d:'right', ' ':'stop',
+    ArrowUp:'forward', ArrowLeft:'left', ArrowDown:'backward', ArrowRight:'right'
+  };
   document.addEventListener('keydown', e => {
     if (document.getElementById('modal-overlay').style.display !== 'none') return;
     const dir = keyMap[e.key];
     if (dir) { e.preventDefault(); move(dir); }
   });
   document.addEventListener('keyup', e => {
-    if (keyMap[e.key] && keyMap[e.key] !== 'stop') move('stop');
+    const dir = keyMap[e.key];
+    if (dir && dir !== 'stop') move('stop');
   });
 
-  // ── Log ───────────────────────────────────────────────────────────
   function log(msg, type = '') {
     const el = document.getElementById('log');
     const now = new Date().toLocaleTimeString('es', { hour12: false });
@@ -367,7 +413,7 @@
     p.innerHTML = `<span class="ts">[${now}]</span>${msg}`;
     el.appendChild(p);
     el.scrollTop = el.scrollHeight;
-    if (el.children.length > 80) el.removeChild(el.firstChild);
+    if (el.children.length > 100) el.removeChild(el.firstChild);
   }
 </script>
 </body>

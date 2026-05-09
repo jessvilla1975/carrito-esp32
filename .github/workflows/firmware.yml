@@ -87,7 +87,7 @@ jobs:
           echo "https://${{ secrets.S3_BUCKET_NAME }}.s3.amazonaws.com/esp32-cam/${{ github.ref_name }}/firmware.bin"
 
       - name: Publicar notificación OTA por MQTT (opcional)
-        if: ${{ secrets.MQTT_SERVER != '' }}
+        if: always()
         env:
           MQTT_SERVER:   ${{ secrets.MQTT_SERVER }}
           MQTT_PORT:     ${{ secrets.MQTT_PORT }}

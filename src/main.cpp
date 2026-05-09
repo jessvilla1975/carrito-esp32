@@ -5,6 +5,7 @@
 #include "libiot.h"
 #include "libmotor.h"
 #include "libultrasonic.h"
+#include "libbuzzer.h"
 
 // ─────────────────────────────────────────────────────────────────
 //  CarrIoT — ESP32-S3-DevKitC-1
@@ -13,6 +14,7 @@
 //    · Servo izquierdo SG90 continuo → GPIO 20
 //    · Servo derecho  SG90  continuo → GPIO 21
 //    · HC-SR04 TRIG → GPIO 38 | ECHO → GPIO 39
+//    · Buzzer activo 3.3 V → GPIO 4 (alerta ≤10 cm en modo manual)
 //    · Botón BOOT (GPIO 0) — mantener 3 s = factory reset
 //
 //  Modos de operación:
@@ -49,6 +51,7 @@ static AutoState    autoState      = AUTO_FORWARD;
 static unsigned long turnStartMs   = 0;
 static int           turnDir       = 1;    // 1=derecha, -1=izquierda (alterna)
 static unsigned long lastDistMs    = 0;
+static unsigned long lastManualDistMs = 0;
 static unsigned long lastBatMs     = 0;
 
 // ── Evasión autónoma ─────────────────────────────────────────────
@@ -112,6 +115,26 @@ static void autonomousLoop() {
     }
 }
 
+// ── Modo manual: telemetría de distancia + buzzer si ≤ MANUAL_BUZZER_ALERT_CM ──
+static void manualSenseLoop() {
+    float dist = readDistanceCm();
+    const char* estadoStr = (dist < 0) ? "fuera_rango" :
+                            (dist <= (float)MANUAL_BUZZER_ALERT_CM) ? "critico" :
+                            (dist < OBSTACLE_DIST_CM) ? "obstaculo" :
+                            (dist < CLEAR_DIST_CM)    ? "precaucion" : "libre";
+
+    if (millis() - lastManualDistMs > DIST_PUBLISH_MS) {
+        lastManualDistMs = millis();
+        if (dist > 0) {
+            publishDistance(dist, estadoStr);
+            Serial.printf("[Manual] %.1f cm — %s\n", dist, estadoStr);
+        }
+    }
+
+    const bool tooClose = (dist > 0 && dist <= (float)MANUAL_BUZZER_ALERT_CM);
+    buzzerSetAlert(tooClose);
+}
+
 // ── Batería ───────────────────────────────────────────────────────
 static void readAndPublishBattery() {
 #if BAT_ENABLED
@@ -146,6 +169,7 @@ void setup() {
     // ── Inicializar periféricos ───────────────────────────────────
     setupMotors();
     setupUltrasonic();
+    setupBuzzer();
 
     // ── WiFi ──────────────────────────────────────────────────────
     listWiFiNetworks();
@@ -179,9 +203,13 @@ void loop() {
 
     // ── Comportamiento según el modo activo ───────────────────────
     if (driveMode == MODE_AUTO) {
+        buzzerSetAlert(false);
         autonomousLoop();
+    } else {
+        // Manual: comandos por MQTT; HC-SR04 sigue activo + alerta acústica ≤10 cm
+        manualSenseLoop();
     }
-    // En MODE_MANUAL los comandos llegan por MQTT (callback en libiot.cpp)
+    buzzerLoop();
 
     // ── Batería periódica ─────────────────────────────────────────
     if (millis() - lastBatMs > BAT_INTERVAL_MS) {

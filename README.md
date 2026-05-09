@@ -12,6 +12,7 @@ AWS EC2, OTA desde AWS S3 y dashboard web en GitHub Pages.
 | Sensor de distancia | HC-SR04 — TRIG GPIO 38 / ECHO GPIO 39 |
 | Servo izquierdo | SG90 rotación continua → GPIO 20 |
 | Servo derecho | SG90 rotación continua → GPIO 21 |
+| Buzzer activo (3.3 V) | Alerta de proximidad → GPIO 4 (solo en modo **manual**, si distancia ≤ 10 cm) |
 | Botón factory reset | BOOT (GPIO 0) — mantener 3 s al encender |
 
 ## Modos de operación
@@ -19,7 +20,7 @@ AWS EC2, OTA desde AWS S3 y dashboard web en GitHub Pages.
 | Modo | Descripción |
 |---|---|
 | **Autónomo** (por defecto) | El carrito avanza y detecta obstáculos con el HC-SR04. Cuando detecta algo a menos de 25 cm, se detiene, gira hasta encontrar un camino libre y reanuda la marcha. |
-| **Manual** | Recibe comandos de dirección por MQTT desde el dashboard o cualquier cliente. |
+| **Manual** | Recibe comandos por MQTT. El HC-SR04 sigue midiendo: publica distancia en MQTT y, si hay obstáculo a **10 cm o menos**, el buzzer en GPIO 4 pita en modo intermitente. |
 
 El modo se cambia publicando en `carrito/cmd/modo`.
 
@@ -105,12 +106,13 @@ en `src/libmotor.h` en pasos de 5 µs hasta que los servos queden quietos.
 
 ## Umbral de obstáculo
 
-En `src/libultrasonic.h` se definen dos constantes:
+En `src/libultrasonic.h` se definen estas constantes:
 
 | Constante | Valor por defecto | Descripción |
 |---|---|---|
-| `OBSTACLE_THRESHOLD_CM` | 25 | Distancia mínima antes de detenerse |
-| `CLEAR_PATH_CM` | 40 | Distancia considerada camino libre |
+| `OBSTACLE_DIST_CM` | 25 | Distancia mínima antes de detenerse (modo autónomo) |
+| `CLEAR_DIST_CM` | 40 | Distancia mínima para considerar el camino libre |
+| `MANUAL_BUZZER_ALERT_CM` | 10 | En modo manual, buzzer si lectura válida ≤ este valor (`libultrasonic.h`) |
 
 ## Estructura del proyecto
 
@@ -121,10 +123,11 @@ carrito-esp32/
 ├── docs/
 │   └── index.html                  # Dashboard web (GitHub Pages)
 ├── src/
-│   ├── main.cpp                    # Punto de entrada + lógica autónoma
+│   ├── main.cpp                    # Punto de entrada + autónomo + manual + buzzer
 │   ├── libiot.h / libiot.cpp       # MQTT / TLS / publicación de estado
 │   ├── libmotor.h / libmotor.cpp   # Servos SG90 (LEDC PWM)
 │   ├── libultrasonic.h / .cpp      # HC-SR04 — medición de distancia
+│   ├── libbuzzer.h / libbuzzer.cpp  # Buzzer de proximidad (manual)
 │   ├── libwifi.h / libwifi.cpp     # Conexión WiFi
 │   ├── libstorage.h / libstorage.cpp  # NVS — credenciales persistentes
 │   ├── libprovision.h / .cpp       # Portal cautivo de configuración

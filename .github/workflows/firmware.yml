@@ -87,7 +87,7 @@ jobs:
           echo "https://${{ secrets.S3_BUCKET_NAME }}.s3.amazonaws.com/esp32-cam/${{ github.ref_name }}/firmware.bin"
 
       - name: Publicar notificación OTA por MQTT (opcional)
-        if: always()
+        continue-on-error: true
         env:
           MQTT_SERVER:   ${{ secrets.MQTT_SERVER }}
           MQTT_PORT:     ${{ secrets.MQTT_PORT }}
@@ -99,21 +99,30 @@ jobs:
           pip install paho-mqtt --quiet
           python3 - <<'EOF'
           import paho.mqtt.publish as publish
-          import os, json
+          import os, json, ssl
 
-          version = os.environ["VERSION"]
-          bucket  = os.environ["S3_BUCKET"]
-          url     = f"https://{bucket}.s3.amazonaws.com/esp32-cam/{version}/firmware.bin"
+          mqtt_server = os.environ.get("MQTT_SERVER", "").strip()
+          if not mqtt_server:
+              print("MQTT_SERVER no configurado — saltando notificación OTA")
+              exit(0)
+
+          version = os.environ.get("VERSION", "unknown")
+          bucket  = os.environ.get("S3_BUCKET", "")
+          url     = f"https://{bucket}.s3.us-east-1.amazonaws.com/esp32-cam/{version}/firmware.bin"
           payload = json.dumps({"url": url, "version": version})
 
+          port = int(os.environ.get("MQTT_PORT", "8883"))
+          tls_ctx = ssl.create_default_context()
+
           publish.single(
-              topic    = "carrito/ota/update",
-              payload  = payload,
-              hostname = os.environ["MQTT_SERVER"],
-              port     = int(os.environ.get("MQTT_PORT", "8883")),
-              auth     = {"username": os.environ["MQTT_USER"],
-                          "password": os.environ["MQTT_PASSWORD"]},
-              tls      = {"tls_version": None},
+              topic     = "carrito/ota/update",
+              payload   = payload,
+              hostname  = mqtt_server,
+              port      = port,
+              auth      = {"username": os.environ.get("MQTT_USER", ""),
+                           "password": os.environ.get("MQTT_PASSWORD", "")},
+              tls       = {"ca_certs": None, "tls_version": ssl.PROTOCOL_TLS_CLIENT,
+                           "context": tls_ctx},
           )
-          print(f"OTA publicado: {payload}")
+          print(f"OTA publicado en {mqtt_server}:{port} → {payload}")
           EOF

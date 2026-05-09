@@ -21,8 +21,8 @@ float readDistanceCm() {
     delayMicroseconds(10);
     digitalWrite(TRIG_PIN, LOW);
 
-    // Medir duración del eco (timeout = 30 ms → ~500 cm, fuera de rango útil)
-    long duration = pulseIn(ECHO_PIN, HIGH, 30000);
+    // Timeout acotado al rango máximo (antes 30000 µs bloqueaba ~30 ms en cada fallo)
+    long duration = pulseIn(ECHO_PIN, HIGH, SONAR_ECHO_TIMEOUT_US);
 
     if (duration == 0) return -1.0f;  // sin eco = sin objeto en rango
 
@@ -38,5 +38,9 @@ bool isObstacle() {
 
 bool isClearPath() {
     float d = readDistanceCm();
-    return (d < 0 || d >= CLEAR_DIST_CM);  // -1 = sin objeto detectado = libre
+    return isClearPathDistance(d);
+}
+
+bool isClearPathDistance(float d) {
+    return (d < 0 || d >= (float)CLEAR_DIST_CM);
 }

@@ -33,7 +33,7 @@
 // ── Parámetros del comportamiento autónomo ────────────────────────
 #define AUTO_SPEED          65    // velocidad crucero (0-100)
 #define TURN_SPEED          55    // velocidad de giro al evadir
-#define DIST_PUBLISH_MS   1000    // publicar distancia cada 1 s
+#define DIST_PUBLISH_MS     300   // publicar distancia por MQTT (ms), más ágil en el dashboard
 #define BAT_INTERVAL_MS  30000    // publicar batería cada 30 s
 
 // ── ADC batería (opcional) ────────────────────────────────────────
@@ -98,7 +98,8 @@ static void autonomousLoop() {
             break;
 
         case AUTO_TURNING:
-            if (isClearPath()) {
+            // Una sola lectura por ciclo (isClearPath() disparaba otro pulseIn y doblaba la latencia)
+            if (isClearPathDistance(dist)) {
                 // Camino libre encontrado → reanudar avance
                 Serial.println("[Auto] Camino libre — reanudando");
                 turnDir = -turnDir;  // alternar dirección en el próximo giro
@@ -186,7 +187,7 @@ void setup() {
         Serial.println("  Topics:");
         Serial.println("    " TOPIC_CMD_MODE "  {\"mode\":\"manual\"}");
         Serial.println("    " TOPIC_CMD_MOV  "  {\"dir\":\"forward\",\"speed\":70}");
-        Serial.println("    " TOPIC_STATUS_DIST " (distancia publicada c/1s)");
+        Serial.println("    " TOPIC_STATUS_DIST " (telemetria distancia ~300 ms)");
         Serial.println("  Modo inicial: AUTÓNOMO");
         Serial.println("========================================\n");
     } else {

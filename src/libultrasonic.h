@@ -21,6 +21,9 @@
 #define CLEAR_DIST_CM     40   // distancia mínima para considerar el camino libre
 #define MAX_DIST_CM       300  // distancia máxima válida (evita lecturas falsas)
 
+/** Tiempo máximo de espera del eco (µs): ida y vuelta para MAX_DIST_CM + margen */
+#define SONAR_ECHO_TIMEOUT_US  ((uint32_t)((MAX_DIST_CM * 2.0f / 0.0343f) + 1000))
+
 /** Umbral en modo manual: si la lectura es válida y ≤ este valor → buzzer de alerta */
 #define MANUAL_BUZZER_ALERT_CM  10
 
@@ -28,5 +31,6 @@ void    setupUltrasonic();
 float   readDistanceCm();
 bool    isObstacle();
 bool    isClearPath();
+bool    isClearPathDistance(float cm);
 
 #endif /* LIBULTRASONIC_H */

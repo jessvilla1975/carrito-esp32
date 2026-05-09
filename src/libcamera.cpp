@@ -3,7 +3,7 @@
 #include <WiFi.h>
 #include "esp_camera.h"
 
-// ── Pinout ESP32-S3-CAM-N16R8 (Keyestudio MB0184) ──────────────────
+// ── Pinout ESP32-S3-CAM-N16R8  ──────────────────
 #define CAM_PIN_PWDN    -1
 #define CAM_PIN_RESET   -1
 #define CAM_PIN_XCLK    15
